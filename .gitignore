@@ -1,0 +1,7 @@
+# Arduino / editor
+build/
+*.bin
+*.elf
+.vscode/
+.DS_Store
+Thumbs.db
