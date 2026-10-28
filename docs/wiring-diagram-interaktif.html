@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Smart School Bell v3.1 – Wiring Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;600;700&display=swap');
+  :root{
+    --bg:#0a0c10;--surface:#111318;--card:#161a22;--border:#232730;
+    --accent:#f5a623;--green:#2ecc71;--blue:#3498db;--red:#e8435a;
+    --purple:#9b59b6;--text:#e8eaf0;--muted:#6b7280;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;padding:20px;min-height:100vh}
+  h1{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;color:var(--accent);letter-spacing:4px;margin-bottom:4px}
+  .subtitle{color:var(--muted);font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+
+  .diagram{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:24px}
+
+  .comp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  .comp-header{padding:12px 16px;font-weight:700;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+  .comp-body{padding:16px}
+
+  .nodemcu  .comp-header{background:#1a2035;border-bottom:2px solid var(--blue)}
+  .rtc      .comp-header{background:#1a2820;border-bottom:2px solid var(--green)}
+  .dfplayer .comp-header{background:#2a1520;border-bottom:2px solid var(--red)}
+  .amplifier .comp-header{background:#1a1820;border-bottom:2px solid var(--purple)}
+  .power    .comp-header{background:#2a1a10;border-bottom:2px solid var(--accent)}
+  .sdcard   .comp-header{background:#0d1f2d;border-bottom:2px solid var(--blue)}
+  .soundreg .comp-header{background:#1a2010;border-bottom:2px solid var(--green)}
+
+  .pin-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem}
+  .pin{padding:3px 9px;border-radius:4px;font-size:0.75rem;font-weight:600;flex-shrink:0;min-width:70px;text-align:center}
+  .pin-src{background:#1e2535;border:1px solid var(--border);color:var(--text)}
+  .arrow{color:var(--muted);flex-shrink:0}
+  .pin-dst{background:#1e2535;border:1px solid var(--border);color:var(--text)}
+  .pin-note{color:var(--muted);font-size:0.72rem;margin-left:4px}
+
+  .pin-vcc  {background:#2a1010;border-color:#e74c3c;color:#e74c3c}
+  .pin-gnd  {background:#1a1a1a;border-color:#555;color:#999}
+  .pin-sig  {background:#102010;border-color:var(--green);color:var(--green)}
+  .pin-rx   {background:#101520;border-color:var(--blue);color:var(--blue)}
+  .pin-tx   {background:#201520;border-color:var(--purple);color:var(--purple)}
+  .pin-audio{background:#201a10;border-color:var(--accent);color:var(--accent)}
+
+  /* Flow diagram */
+  .flow{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+  .flow h3{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--accent);letter-spacing:3px;margin-bottom:16px}
+  .flow-chain{display:flex;flex-wrap:wrap;align-items:center;gap:0}
+  .flow-node{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:0.8rem;text-align:center;min-width:80px}
+  .flow-arrow{color:var(--accent);font-size:1.2rem;padding:0 4px;font-weight:bold}
+  .f-green {border-color:var(--green);color:var(--green)}
+  .f-blue  {border-color:var(--blue);color:var(--blue)}
+  .f-red   {border-color:var(--red);color:var(--red)}
+  .f-orange{border-color:var(--accent);color:var(--accent)}
+
+  /* Legend */
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .legend-item{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--muted)}
+  .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+  .warn{background:#1a1200;border:1px solid var(--accent);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;line-height:1.7}
+  .warn strong{color:var(--accent)}
+
+  .info{background:#0d1a0d;border:1px solid var(--green);border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;line-height:1.7}
+  .info strong{color:var(--green)}
+
+  .section-title{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:3px;color:var(--muted);margin:20px 0 10px;text-transform:uppercase}
+
+  /* Step list */
+  .step-list{counter-reset:step}
+  .step-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+  .step-num{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--accent);line-height:1;flex-shrink:0;width:24px}
+  .step-text{font-size:0.82rem;color:var(--text);line-height:1.7;padding-top:2px}
+  .step-text code{font-family:'IBM Plex Mono',monospace;background:#1e2535;border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:0.75rem;color:var(--accent)}
+</style>
+</head>
+<body>
+
+<h1>🔔 SMART BELL <span style="color:var(--muted);font-size:1.2rem">v3.1</span></h1>
+<div class="subtitle">Wiring Diagram & Panduan Koneksi · NodeMCU ESP8266</div>
+
+<div class="warn">
+  ⚠️ <strong>RESISTOR WAJIB:</strong> Pasang resistor <strong>1kΩ</strong> (atau 220Ω) antara TX NodeMCU (D1) → RX DFPlayer untuk proteksi level tegangan 3.3V vs 5V. Tanpa resistor, DFPlayer bisa rusak.
+</div>
+
+<!-- SIGNAL FLOW -->
+<div class="flow">
+  <h3>⚡ Alur Sinyal Audio</h3>
+  <div class="flow-chain">
+    <div class="flow-node f-blue">NodeMCU<br><small>ESP8266</small></div>
+    <div class="flow-arrow">──UART──►</div>
+    <div class="flow-node f-red">DFPlayer<br><small>Mini</small></div>
+    <div class="flow-arrow">──DAC──►</div>
+    <div class="flow-node f-orange">RCA<br><small>L/R</small></div>
+    <div class="flow-arrow">──AUX──►</div>
+    <div class="flow-node" style="border-color:#9b59b6;color:#9b59b6">Amplifier<br><small>TOA</small></div>
+    <div class="flow-arrow">─100V──►</div>
+    <div class="flow-node f-green">Speaker<br><small>TOA 🔊</small></div>
+  </div>
+</div>
+
+<!-- WIRING DIAGRAMS -->
+<div class="diagram">
+
+  <!-- RTC DS1302 -->
+  <div class="comp-card rtc">
+    <div class="comp-header">🕐 RTC DS1302 → NodeMCU</div>
+    <div class="comp-body">
+      <div class="pin-row">
+        <span class="pin pin-vcc">VCC</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-vcc">3.3V</span>
+        <span class="pin-note">Power</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-gnd">GND</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-gnd">GND</span>
+        <span class="pin-note">Ground</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-sig">CLK</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-sig">D5</span>
+        <span class="pin-note">Clock (GPIO14)</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-sig">DAT</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-sig">D6</span>
+        <span class="pin-note">Data (GPIO12)</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-sig">RST</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-sig">D7</span>
+        <span class="pin-note">Reset (GPIO13)</span>
+      </div>
+      <div class="legend" style="margin-top:12px">
+        <div class="legend-item"><div class="legend-dot" style="background:#e74c3c"></div> Power 3.3V</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#555"></div> Ground</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#2ecc71"></div> Data Signal</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DFPlayer -->
+  <div class="comp-card dfplayer">
+    <div class="comp-header">🎵 DFPlayer Mini → NodeMCU</div>
+    <div class="comp-body">
+      <div class="pin-row">
+        <span class="pin pin-vcc">VCC</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-vcc">Vin/5V</span>
+        <span class="pin-note">Power 5V</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-gnd">GND</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-gnd">GND</span>
+        <span class="pin-note">Ground</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-rx">RX</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-rx">D1</span>
+        <span class="pin-note">⚠️ via 1kΩ/220Ω (GPIO5)</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-tx">TX</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-tx">D2</span>
+        <span class="pin-note">GPIO4</span>
+      </div>
+      <hr style="border-color:var(--border);margin:12px 0">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:1px">AUDIO OUTPUT:</div>
+      <div class="pin-row">
+        <span class="pin pin-audio">DAC_L</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-audio">RCA L</span>
+        <span class="pin-note">Merah</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-audio">DAC_R</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-audio">RCA R</span>
+        <span class="pin-note">Putih</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-gnd">GND</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-gnd">RCA GND</span>
+        <span class="pin-note">Hitam (L+R gabung)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Amplifier TOA -->
+  <div class="comp-card amplifier">
+    <div class="comp-header">📢 Amplifier TOA → Speaker</div>
+    <div class="comp-body">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:1px">INPUT:</div>
+      <div class="pin-row">
+        <span class="pin" style="background:#101520;border-color:#3498db;color:#3498db;min-width:80px">AUX IN L</span>
+        <span class="arrow">←</span>
+        <span class="pin pin-audio">RCA L</span>
+        <span class="pin-note">dari DFPlayer</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin" style="background:#101520;border-color:#3498db;color:#3498db;min-width:80px">AUX IN R</span>
+        <span class="arrow">←</span>
+        <span class="pin pin-audio">RCA R</span>
+        <span class="pin-note">dari DFPlayer</span>
+      </div>
+      <hr style="border-color:var(--border);margin:12px 0">
+      <div style="font-size:0.75rem;color:var(--muted);margin-bottom:8px;font-weight:600;letter-spacing:1px">OUTPUT 100V LINE:</div>
+      <div class="pin-row">
+        <span class="pin" style="background:#1a1000;border-color:var(--accent);color:var(--accent);min-width:80px">100V (+)</span>
+        <span class="arrow">→</span>
+        <span class="pin" style="background:#101510;border-color:#2ecc71;color:#2ecc71">TOA (+)</span>
+        <span class="pin-note">Kabel merah</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin" style="background:#1a1a1a;border-color:#555;color:#999;min-width:80px">COM</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-gnd">TOA (−)</span>
+        <span class="pin-note">Kabel hitam</span>
+      </div>
+      <div style="margin-top:12px;padding:10px;background:#1a0a0a;border-radius:6px;font-size:0.75rem;color:#e74c3c;line-height:1.6">
+        ⚡ <strong>Amplifier selalu ON.</strong><br>
+        Tidak ada relay. Audio hanya diputar saat jadwal tiba.
+      </div>
+    </div>
+  </div>
+
+  <!-- Power -->
+  <div class="comp-card power">
+    <div class="comp-header">🔋 Power Supply</div>
+    <div class="comp-body">
+      <div class="pin-row" style="margin-bottom:14px">
+        <span class="pin pin-vcc">5V 2A</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-vcc">NodeMCU Vin</span>
+      </div>
+      <div class="pin-row" style="margin-bottom:14px">
+        <span class="pin pin-vcc">5V</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-vcc">DFPlayer VCC</span>
+      </div>
+      <div class="pin-row">
+        <span class="pin pin-gnd">GND</span>
+        <span class="arrow">→</span>
+        <span class="pin pin-gnd">GND semua</span>
+      </div>
+      <hr style="border-color:var(--border);margin:12px 0">
+      <div style="font-size:0.75rem;color:var(--muted);line-height:1.8">
+        📦 <strong style="color:var(--text)">NodeMCU</strong> → 3.3V internal regulator<br>
+        📦 <strong style="color:var(--text)">RTC DS1302</strong> → 3.3V dari NodeMCU<br>
+        📦 <strong style="color:var(--text)">DFPlayer</strong> → 5V langsung<br>
+        📦 <strong style="color:var(--text)">Amplifier</strong> → Power terpisah sesuai spek
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- SD CARD FORMAT -->
+<div class="section-title">📁 Format SD Card DFPlayer</div>
+<div class="comp-card sdcard" style="margin-bottom:16px">
+  <div class="comp-header">💾 SD Card Structure</div>
+  <div class="comp-body">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:2;color:var(--text)">
+      <div style="color:var(--muted)">SD Card (FAT32, max 32GB)</div>
+      <div style="margin-left:16px">📁 <span style="color:var(--accent)">mp3/</span></div>
+      <div style="margin-left:32px">🎵 <span style="color:var(--green)">001_Bel Masuk.mp3</span> <span style="color:var(--muted)">← index 1</span></div>
+      <div style="margin-left:32px">🎵 <span style="color:var(--green)">002_Istirahat.mp3</span> <span style="color:var(--muted)">← index 2</span></div>
+      <div style="margin-left:32px">🎵 <span style="color:var(--green)">003_Pulang.mp3</span> <span style="color:var(--muted)">← index 3</span></div>
+      <div style="margin-left:32px">🎵 <span style="color:var(--green)">004_Upacara.mp3</span> <span style="color:var(--muted)">← index 4</span></div>
+    </div>
+    <div style="margin-top:12px;font-size:0.75rem;color:var(--muted);line-height:1.7;background:var(--surface);padding:10px;border-radius:6px">
+      ⚠️ Nomor urut file <strong style="color:var(--accent)">001, 002, 003...</strong> harus mulai dari 001 dan tidak boleh skip.<br>
+      Nama belakang file bebas, tapi sebaiknya <strong style="color:var(--accent)">disamakan</strong> dengan nama yang didaftarkan di dashboard.
+    </div>
+  </div>
+</div>
+
+<!-- ALUR PENGGUNAAN -->
+<div class="section-title">🚀 Alur Penggunaan v3.1</div>
+<div class="comp-card soundreg" style="margin-bottom:16px">
+  <div class="comp-header">📋 Langkah Setup Suara & Jadwal</div>
+  <div class="comp-body">
+    <div class="step-list">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div class="step-text">Salin file MP3 ke SD card dengan nama <code>001_NamaFile.mp3</code>, <code>002_NamaFile.mp3</code>, dst. Taruh di folder <code>/mp3/</code>.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-text">Pasang SD card ke DFPlayer Mini, lalu nyalakan NodeMCU.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-text">Buka dashboard di browser → masuk ke seksi <strong style="color:var(--green)">Daftar Suara SD Card</strong> → isi No. Index + Nama Suara (samakan dengan nama file) → klik Daftarkan.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-text">Tambah jadwal bel → pilih jam, hari, dan suara dari dropdown → simpan. Urutan pemanggilan suara bebas, tidak harus urut.</div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">5</div>
+        <div class="step-text">Bel otomatis berbunyi tepat di detik <code>:00</code> sesuai jadwal yang disimpan.</div>
+      </div>
+    </div>
+
+    <hr style="border-color:var(--border);margin:14px 0">
+
+    <div style="font-size:0.75rem;color:var(--muted);line-height:1.8">
+      💡 <strong style="color:var(--accent)">Contoh:</strong><br>
+      SD card: <span style="font-family:'IBM Plex Mono',monospace;color:var(--green)">001_Bel Masuk.mp3</span> &nbsp;→&nbsp; Dashboard: Index <span style="color:var(--accent)">1</span>, Nama <span style="color:var(--accent)">Bel Masuk</span><br>
+      Jadwal: 07:00 Senin–Jumat → <span style="color:var(--accent)">Bel Masuk</span> &nbsp;|&nbsp; 13:00 Semua → <span style="color:var(--accent)">Pulang</span> ✅
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY -->
+<div class="section-title">📚 Library Arduino Required</div>
+<div class="comp-card" style="margin-bottom:16px">
+  <div class="comp-header" style="background:#1a1020;border-bottom:2px solid #9b59b6">🔧 Dependencies</div>
+  <div class="comp-body">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.8rem;line-height:2">
+      <div><span style="color:var(--green)">✓</span> <span style="color:var(--accent)">ArduinoJson</span> v6.x — Benoit Blanchon</div>
+      <div><span style="color:var(--green)">✓</span> <span style="color:var(--accent)">Ds1302</span> — Rafa Couto</div>
+      <div><span style="color:var(--green)">✓</span> <span style="color:var(--accent)">DFRobotDFPlayerMini</span> — DFRobot</div>
+      <div><span style="color:var(--muted)">●</span> <span style="color:var(--muted)">ESP8266WiFi</span> — (bawaan ESP8266 core)</div>
+      <div><span style="color:var(--muted)">●</span> <span style="color:var(--muted)">ESP8266WebServer</span> — (bawaan)</div>
+      <div><span style="color:var(--muted)">●</span> <span style="color:var(--muted)">LittleFS</span> — (bawaan)</div>
+      <div><span style="color:var(--muted)">●</span> <span style="color:var(--muted)">SoftwareSerial</span> — (bawaan)</div>
+    </div>
+  </div>
+</div>
+
+<!-- FILE STRUCTURE -->
+<div class="section-title">🗂️ Struktur File Project</div>
+<div class="comp-card" style="margin-bottom:24px">
+  <div class="comp-header" style="background:#1a2035;border-bottom:2px solid var(--blue)">📁 Project Files</div>
+  <div class="comp-body">
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:0.82rem;line-height:2;color:var(--text)">
+      <div>📁 <span style="color:var(--accent)">SmartSchoolBell/</span></div>
+      <div style="margin-left:20px">📄 <span style="color:var(--green)">SmartSchoolBell.ino</span> <span style="color:var(--muted)">← sketch utama</span></div>
+      <div style="margin-left:20px">📁 <span style="color:var(--accent)">data/</span> <span style="color:var(--muted)">← upload via ESP8266 Sketch Data Upload</span></div>
+      <div style="margin-left:40px">📄 <span style="color:var(--blue)">index.html</span> <span style="color:var(--muted)">← dashboard web</span></div>
+      <div style="margin-left:40px">🖼️ <span style="color:var(--blue)">logo.png</span> <span style="color:var(--muted)">← logo sekolah (taruh manual)</span></div>
+    </div>
+    <div style="margin-top:12px;font-size:0.75rem;color:var(--muted);line-height:1.7;background:var(--surface);padding:10px;border-radius:6px">
+      LittleFS menyimpan: <span style="color:var(--accent)">schedules.json</span> (jadwal) &amp; <span style="color:var(--accent)">soundlist.json</span> (daftar suara terdaftar).<br>
+      File MP3 audio <strong style="color:var(--accent)">tidak</strong> disimpan di sini — langsung di SD card DFPlayer.
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center;color:var(--muted);font-size:0.72rem;margin-top:20px;letter-spacing:1px">
+  Smart Bell v3.1 · NodeMCU ESP8266 · MA Al-Ibrohimi Manyar Gresik
+</div>
+
+</body>
+</html>
