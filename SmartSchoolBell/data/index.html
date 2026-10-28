@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Bel Otomatis – MA Al-Ibrohimi</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root {
+  --bg:       #0e1117;
+  --surface:  #161b25;
+  --card:     #1c2333;
+  --border:   #2a3347;
+  --accent:   #f5c842;
+  --accent2:  #e8a020;
+  --green:    #22c55e;
+  --red:      #ef4444;
+  --text:     #f0f2f8;
+  --muted:    #64748b;
+  --radius:   16px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Tajawal', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 50px;
+  overflow-x: hidden;
+}
+
+/* ── HERO HEADER ── */
+.hero {
+  background: linear-gradient(180deg, #111827 0%, #0e1117 100%);
+  padding: 32px 20px 24px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -60px; left: 50%;
+  transform: translateX(-50%);
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+#schoolLogo {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Logo */
+.logo-ring {
+  width: 120px; height: 120px;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+}
+#schoolLogo {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: none;
+}
+.logo-emoji { font-size: 52px; line-height: 1; }
+
+.school-name {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.school-sub {
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-top: 5px;
+}
+
+/* Status bar */
+.status-bar {
+  margin: 16px 20px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 1px;
+}
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--green);
+  font-weight: 700;
+}
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse-dot 2s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+/* ── CLOCK DISPLAY ── */
+.clock-section {
+  margin: 20px 20px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+#clock {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(3rem, 16vw, 4.5rem);
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 4px;
+  text-shadow: 0 0 30px rgba(245,200,66,0.35);
+  line-height: 1;
+}
+.clock-meta {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+.clock-day {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 14px;
+}
+.clock-ip {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.next-bell-bar {
+  margin-top: 14px;
+  background: rgba(245,200,66,0.07);
+  border: 1px solid rgba(245,200,66,0.2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nb-icon { font-size: 1rem; flex-shrink: 0; }
+.nb-label { font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 2px; }
+.nb-val   { font-size: 0.88rem; font-weight: 700; color: var(--accent); font-family: 'IBM Plex Mono', monospace; }
+
+/* ── SECTION WRAPPER ── */
+.section {
+  margin: 16px 20px 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.sec-head {
+  padding: 13px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-body { padding: 18px; }
+
+/* ── SCROLL PICKER JAM ── */
+.picker-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  height: 160px;
+  position: relative;
+}
+/* highlight center */
+.picker-wrap::before,
+.picker-wrap::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.4;
+  z-index: 10;
+  pointer-events: none;
+}
+.picker-wrap::before { top: calc(50% - 26px); }
+.picker-wrap::after  { top: calc(50% + 26px); }
+
+/* fade top & bottom */
+.picker-col {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  cursor: ns-resize;
+}
+.picker-col::before,
+.picker-col::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 50px;
+  z-index: 5;
+  pointer-events: none;
+}
+.picker-col::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--surface) 0%, transparent 100%);
+}
+.picker-col::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--surface) 0%, transparent 100%);
+}
+
+.picker-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94);
+  will-change: transform;
+  padding: 52px 0;
+}
+.picker-item {
+  height: 52px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color 0.2s, font-size 0.2s;
+  user-select: none;
+  flex-shrink: 0;
+}
+.picker-item.selected {
+  color: var(--accent);
+  font-size: 1.9rem;
+}
+.picker-item.near {
+  color: var(--text);
+  font-size: 1.6rem;
+}
+
+.picker-sep {
+  width: 24px;
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+/* ── FORM FIELDS ── */
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.form-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 13px 16px;
+  border-radius: 12px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.form-input::placeholder { color: var(--muted); }
+.form-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,0.12);
+}
+
+/* ── SELECT SOUND ── */
+.select-wrap { position: relative; }
+.select-wrap select {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 13px 40px 13px 16px;
+  border-radius: 12px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s;
+}
+.select-wrap select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(245,200,66,0.12);
+}
+.select-arrow {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  pointer-events: none;
+  font-size: 0.8rem;
+}
+
+/* ── DAY TOGGLE ── */
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.day-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  padding: 11px 6px;
+  border-radius: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+  user-select: none;
+}
+.day-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #000;
+}
+
+/* ── BUTTONS ── */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 20px;
+  font-family: 'Tajawal', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  width: 100%;
+  letter-spacing: 0.5px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-accent  { background: var(--accent); color: #000; }
+.btn-accent:hover { filter: brightness(1.08); }
+.btn-green   { background: #16301e; border: 1.5px solid var(--green); color: var(--green); }
+.btn-outline-red    { background: transparent; border: 1.5px solid var(--red);   color: var(--red);   padding: 8px 14px; width: auto; font-size: 0.8rem; border-radius: 10px; }
+.btn-outline-accent { background: transparent; border: 1.5px solid var(--accent); color: var(--accent); padding: 8px 14px; width: auto; font-size: 0.8rem; border-radius: 10px; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.sched-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.sched-time {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.7rem;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+  flex-shrink: 0;
+  min-width: 72px;
+}
+.sched-info { flex: 1; min-width: 0; }
+.sched-name { font-size: 0.95rem; font-weight: 700; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sched-ket  { font-size: 0.78rem; color: var(--muted); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sched-days { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); margin-bottom: 2px; }
+.sched-sound{ font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--accent); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sched-actions { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+.empty { text-align: center; color: var(--muted); font-size: 0.85rem; padding: 24px 0; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--card);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  z-index: 999;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+}
+.toast.show  { transform: translateX(-50%) translateY(0); }
+.toast.error { border-color: var(--red); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     HERO HEADER
+══════════════════════════════════ -->
+<div class="hero">
+  <div class="logo-ring">
+    <img id="schoolLogo" src="/logo.png" alt="Logo"
+         onload="this.style.display='block';document.getElementById('logoFallback').style.display='none';"
+         onerror="this.style.display='none';">
+    <span class="logo-emoji" id="logoFallback">🏫</span>
+  </div>
+  <div class="school-name" id="schoolName">MA AL-IBROHIMI</div>
+  <div class="school-sub" id="schoolSub">MANYAR · GRESIK</div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar">
+  <div class="status-left">🔔 &nbsp;BEL OTOMATIS</div>
+  <div class="status-right"><span class="status-dot"></span> ONLINE</div>
+</div>
+
+<!-- ══════════════════════════════════
+     CLOCK
+══════════════════════════════════ -->
+<div class="clock-section">
+  <div id="clock">--:--:--</div>
+  <div class="clock-meta">
+    <div class="clock-day" id="dayBadge">--</div>
+    <div class="clock-ip" id="ipBadge">IP: --</div>
+  </div>
+  <div class="next-bell-bar">
+    <span class="nb-icon">⏰</span>
+    <div>
+      <div class="nb-label">Bel Berikutnya</div>
+      <div class="nb-val" id="nextBell">Memuat...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     TAMBAH JADWAL
+══════════════════════════════════ -->
+<div class="section">
+  <div class="sec-head">🕐 &nbsp;JAM BEL</div>
+  <div class="sec-body">
+
+    <!-- SCROLL PICKER -->
+    <div class="picker-wrap" id="pickerWrap">
+      <!-- Jam -->
+      <div class="picker-col" id="colJam">
+        <div class="picker-list" id="listJam"></div>
+      </div>
+      <div class="picker-sep">:</div>
+      <!-- Menit -->
+      <div class="picker-col" id="colMenit">
+        <div class="picker-list" id="listMenit"></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- NAMA / KETERANGAN -->
+    <div class="form-group">
+      <label class="form-label">NAMA / KETERANGAN</label>
+      <input class="form-input" type="text" id="inputNama"
+             placeholder="cth: Masuk kelas, Istirahat..">
+    </div>
+
+    <!-- PILIH SOUND -->
+    <div class="form-group">
+      <label class="form-label">🎵 &nbsp;PILIH SUARA</label>
+      <div class="select-wrap">
+        <select id="selectSound">
+          <option value="">-- Daftarkan suara dulu --</option>
+        </select>
+        <span class="select-arrow">▼</span>
+      </div>
+    </div>
+
+    <!-- HARI AKTIF -->
+    <div class="form-group">
+      <label class="form-label">HARI AKTIF</label>
+      <div class="day-grid">
+        <div class="day-btn" data-day="Senin">SENIN</div>
+        <div class="day-btn" data-day="Selasa">SELASA</div>
+        <div class="day-btn" data-day="Rabu">RABU</div>
+        <div class="day-btn" data-day="Kamis">KAMIS</div>
+        <div class="day-btn" data-day="Jumat">JUMAT</div>
+        <div class="day-btn" data-day="Sabtu">SABTU</div>
+      </div>
+    </div>
+
+    <button class="btn btn-accent" onclick="addSchedule()">
+      ➕ &nbsp;SIMPAN JADWAL
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DAFTAR SUARA SD CARD
+══════════════════════════════════ -->
+<div class="section">
+  <div class="sec-head">🎵 &nbsp;DAFTAR SUARA SD CARD</div>
+  <div class="sec-body">
+
+    <p style="font-size:0.78rem;color:var(--muted);line-height:1.8;margin-bottom:14px;background:rgba(245,200,66,0.06);border:1px solid rgba(245,200,66,0.15);border-radius:10px;padding:12px 14px;">
+      📋 Daftarkan file MP3 yang sudah kamu salin ke SD Card DFPlayer.<br>
+      Isi <strong style="color:var(--accent)">No. Index</strong> sesuai nomor urut file di SD Card
+      (misal <span style="font-family:'IBM Plex Mono',monospace;color:var(--accent)">001_bel.mp3 → index 1</span>).
+    </p>
+
+    <!-- Form tambah suara -->
+    <div style="display:flex;gap:10px;margin-bottom:12px;align-items:flex-end;">
+      <div style="flex:0 0 80px;">
+        <label class="form-label">NO. INDEX</label>
+        <input class="form-input" type="number" id="inputSoundIndex"
+               min="1" placeholder="1" style="text-align:center;padding:13px 8px;">
+      </div>
+      <div style="flex:1;">
+        <label class="form-label">NAMA SUARA</label>
+        <input class="form-input" type="text" id="inputSoundNama"
+               placeholder="cth: Bel Masuk, Istirahat...">
+      </div>
+    </div>
+    <button class="btn btn-green" onclick="addSound()" style="margin-bottom:14px;">
+      ➕ &nbsp;DAFTARKAN SUARA
+    </button>
+
+    <div class="divider"></div>
+
+    <!-- List suara terdaftar -->
+    <div id="soundList">
+      <div class="empty">📭 Belum ada suara terdaftar</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DAFTAR JADWAL
+══════════════════════════════════ -->
+<div class="section">
+  <div class="sec-head">📋 &nbsp;DAFTAR JADWAL</div>
+  <div class="sec-body">
+    <div id="scheduleList">
+      <div class="empty">📭 Belum ada jadwal</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════
+//  SCROLL PICKER
+// ════════════════════════════════
+function buildPicker(listEl, colEl, count, pad, initial) {
+  // Isi item
+  for (let i = 0; i < count; i++) {
+    const div = document.createElement('div');
+    div.className = 'picker-item';
+    div.textContent = String(i).padStart(pad, '0');
+    listEl.appendChild(div);
+  }
+
+  let current = initial;
+  const ITEM_H = 52;
+
+  function setPos(idx, animate) {
+    if (!animate) listEl.style.transition = 'none';
+    else listEl.style.transition = 'transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94)';
+    listEl.style.transform = `translateY(${-idx * ITEM_H}px)`;
+    // Update classes
+    Array.from(listEl.children).forEach((el, i) => {
+      el.classList.remove('selected','near');
+      if (i === idx) el.classList.add('selected');
+      else if (Math.abs(i - idx) === 1) el.classList.add('near');
+    });
+    current = idx;
+  }
+
+  setPos(initial, false);
+
+  // Touch scroll
+  let startY = 0, startIdx = 0, isDragging = false;
+
+ let lastY = 0, lastTime = 0, velocity = 0;
+
+colEl.addEventListener('touchstart', e => {
+  startY     = e.touches[0].clientY;
+  lastY      = startY;
+  lastTime   = Date.now();
+  startIdx   = current;
+  velocity   = 0;
+  isDragging = true;
+  listEl.style.transition = 'none';
+}, { passive: true });
+
+colEl.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (!isDragging) return;
+
+  const now  = Date.now();
+  const dy   = startY - e.touches[0].clientY;
+  const dt   = now - lastTime;
+
+  // hitung velocity (px per ms)
+  if (dt > 0) {
+    velocity = (e.touches[0].clientY - lastY) / dt;
+  }
+  lastY    = e.touches[0].clientY;
+  lastTime = now;
+
+  // gerak smooth tanpa snap dulu
+  const rawIdx = startIdx + dy / ITEM_H;
+  const idx    = Math.max(0, Math.min(count - 1, rawIdx));
+
+  listEl.style.transform = `translateY(${-idx * ITEM_H}px)`;
+
+  // update highlight realtime
+  const snapIdx = Math.round(idx);
+  Array.from(listEl.children).forEach((el, i) => {
+    el.classList.remove('selected','near');
+    if (i === snapIdx) el.classList.add('selected');
+    else if (Math.abs(i - snapIdx) === 1) el.classList.add('near');
+  });
+  current = snapIdx;
+}, { passive: false });
+
+colEl.addEventListener('touchend', () => {
+  isDragging = false;
+
+  // lempar berdasarkan velocity (efek inertia)
+  const flick = Math.round(-velocity * 120 / ITEM_H);
+  const target = Math.max(0, Math.min(count - 1, current + flick));
+
+  listEl.style.transition = 'transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94)';
+  setPos(target, false);
+});
+
+  // Mouse scroll (desktop)
+  colEl.addEventListener('wheel', e => {
+    e.preventDefault();
+    const dir = e.deltaY > 0 ? 1 : -1;
+    setPos(Math.max(0, Math.min(count - 1, current + dir)), true);
+  }, { passive: false });
+
+  // Click item
+  listEl.addEventListener('click', e => {
+    const items = Array.from(listEl.children);
+    const idx = items.indexOf(e.target);
+    if (idx >= 0) setPos(idx, true);
+  });
+
+  return { getValue: () => current };
+}
+
+// Init picker jam & menit (default 07:00)
+const now = new Date();
+const pickerJam   = buildPicker(
+  document.getElementById('listJam'),
+  document.getElementById('colJam'),
+  24, 2, 7
+);
+const pickerMenit = buildPicker(
+  document.getElementById('listMenit'),
+  document.getElementById('colMenit'),
+  60, 2, 0
+);
+
+function getPickerTime() {
+  const h = String(pickerJam.getValue()).padStart(2,'0');
+  const m = String(pickerMenit.getValue()).padStart(2,'0');
+  return `${h}:${m}`;
+}
+
+// ════════════════════════════════
+//  DAY TOGGLE
+// ════════════════════════════════
+let selectedDays = [];
+document.querySelectorAll('.day-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const d = btn.dataset.day;
+    if (selectedDays.includes(d)) {
+      selectedDays = selectedDays.filter(x => x !== d);
+      btn.classList.remove('active');
+    } else {
+      selectedDays.push(d);
+      btn.classList.add('active');
+    }
+  });
+});
+
+// ════════════════════════════════
+//  API — SOUNDS
+// ════════════════════════════════
+let soundList = [], schedules = [];
+
+async function loadSounds() {
+  try {
+    const r = await fetch('/api/sounds');
+    soundList = await r.json();
+    renderSoundList();
+    // Update dropdown di form jadwal
+    const sel = document.getElementById('selectSound');
+    sel.innerHTML = soundList.length === 0
+      ? '<option value="">-- Daftarkan suara dulu --</option>'
+      : soundList
+          .sort((a,b) => a.index - b.index)
+          .map(s => `<option value="${s.index}">#${s.index} – ${s.nama}</option>`)
+          .join('');
+  } catch(e) {}
+}
+
+function renderSoundList() {
+  const el = document.getElementById('soundList');
+  if (!soundList.length) { el.innerHTML = '<div class="empty">📭 Belum ada suara terdaftar</div>'; return; }
+  const sorted = [...soundList].sort((a,b) => a.index - b.index);
+  el.innerHTML = sorted.map(s => `
+    <div class="sched-item" style="align-items:center;">
+      <div class="sched-time" style="font-size:1.3rem;min-width:48px;text-align:center;">#${s.index}</div>
+      <div class="sched-info">
+        <div class="sched-name">${s.nama}</div>
+        <div class="sched-sound">🎵 ${String(s.index).padStart(3,'0')}_....mp3</div>
+      </div>
+      <div class="sched-actions">
+        <button class="btn btn-outline-accent" onclick="testSoundByIndex(${s.index})">▶ TEST</button>
+        <button class="btn btn-outline-red"    onclick="deleteSound(${s.index})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+async function addSound() {
+  const idx  = parseInt(document.getElementById('inputSoundIndex').value);
+  const nama = document.getElementById('inputSoundNama').value.trim();
+  if (!idx || idx < 1)  { showToast('⚠️ Isi nomor index (min 1)!', true); return; }
+  if (!nama)            { showToast('⚠️ Isi nama suara!', true); return; }
+  try {
+    const r = await fetch('/api/sounds', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ index: idx, nama })
+    });
+    const d = await r.json();
+    if (r.ok && d.ok) {
+      showToast('✅ Suara #' + idx + ' didaftarkan!');
+      document.getElementById('inputSoundIndex').value = '';
+      document.getElementById('inputSoundNama').value  = '';
+      await loadSounds();
+    } else {
+      showToast('❌ ' + (d.msg || 'Gagal mendaftarkan'), true);
+    }
+  } catch(e) { showToast('❌ Error jaringan', true); }
+}
+
+async function deleteSound(idx) {
+  try {
+    const r = await fetch('/api/sounds/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ index: idx })
+    });
+    if (r.ok) { showToast('🗑️ Suara #' + idx + ' dihapus'); await loadSounds(); }
+  } catch(e) {}
+}
+
+async function testSoundByIndex(idx) {
+  try {
+    await fetch('/api/test', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fileIndex: idx })
+    });
+    showToast('🔔 Memutar index #' + idx);
+  } catch(e) {}
+}
+
+// ════════════════════════════════
+//  API — SCHEDULES
+// ════════════════════════════════
+async function addSchedule() {
+  const jam       = getPickerTime();
+  const nama      = document.getElementById('inputNama').value.trim();
+  const fileIndex = parseInt(document.getElementById('selectSound').value);
+
+  if (!jam)                     { showToast('⚠️ Set jam bel!', true); return; }
+  if (selectedDays.length === 0){ showToast('⚠️ Pilih minimal 1 hari!', true); return; }
+  if (!fileIndex || fileIndex < 1) { showToast('⚠️ Pilih suara!', true); return; }
+
+  try {
+    const r = await fetch('/api/schedules', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jam, nama, hari: selectedDays.join(','), fileIndex })
+    });
+    const d = await r.json();
+    if (r.ok && d.ok) {
+      showToast('✅ Jadwal disimpan!');
+      selectedDays = [];
+      document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('inputNama').value = '';
+      await loadSchedules();
+    } else {
+      showToast('❌ ' + (d.msg || 'Gagal menyimpan'), true);
+    }
+  } catch(e) { showToast('❌ Gagal menyimpan', true); }
+}
+
+async function loadSchedules() {
+  try {
+    const r = await fetch('/api/schedules');
+    schedules = await r.json();
+    renderSchedules();
+  } catch(e) {}
+}
+
+function renderSchedules() {
+  const el = document.getElementById('scheduleList');
+  if (!schedules.length) { el.innerHTML = '<div class="empty">📭 Belum ada jadwal</div>'; return; }
+  const sorted = [...schedules].sort((a,b) => a.jam.localeCompare(b.jam));
+  el.innerHTML = sorted.map(s => {
+    const days    = s.hari === 'Semua'
+      ? 'SEMUA HARI'
+      : s.hari.split(',').map(d => d.substring(0,3).toUpperCase()).join(' · ');
+    const ket     = s.nama ? `<div class="sched-ket">📝 ${s.nama}</div>` : '';
+    const sNama   = s.soundNama || ('File #' + s.fileIndex);
+    return `
+    <div class="sched-item">
+      <div class="sched-time">${s.jam}</div>
+      <div class="sched-info">
+        <div class="sched-name">${sNama}</div>
+        ${ket}
+        <div class="sched-days">📅 ${days}</div>
+        <div class="sched-sound">🎵 Index #${s.fileIndex}</div>
+      </div>
+      <div class="sched-actions">
+        <button class="btn btn-outline-accent" onclick="testSoundByIndex(${s.fileIndex})">▶ TEST</button>
+        <button class="btn btn-outline-red"    onclick="deleteSchedule(${s.id})">✕ HAPUS</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function deleteSchedule(id) {
+  try {
+    const r = await fetch('/api/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    });
+    if (r.ok) { showToast('🗑️ Jadwal dihapus'); await loadSchedules(); }
+  } catch(e) {}
+}
+
+// ════════════════════════════════
+//  STATUS POLLING
+// ════════════════════════════════
+async function pollStatus() {
+  try {
+    const r = await fetch('/api/status');
+    const d = await r.json();
+    document.getElementById('clock').textContent    = d.time;
+    document.getElementById('dayBadge').textContent = d.day;
+    document.getElementById('ipBadge').textContent  = 'IP: ' + d.ip;
+    document.getElementById('nextBell').textContent = d.nextBell || '-';
+  } catch(e) {}
+}
+
+function showToast(msg, err=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (err ? ' error' : '');
+  void t.offsetWidth;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── INIT ──
+(async () => {
+  await loadSounds();
+  await loadSchedules();
+  await pollStatus();
+  setInterval(pollStatus, 1000);
+})();
+</script>
+</body>
+</html>
